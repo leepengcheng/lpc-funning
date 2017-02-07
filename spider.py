@@ -17,26 +17,39 @@ class Handler(BaseHandler):
     @config(age=10 * 24 * 60 * 60)
     def index_page(self, response):
         for each in list(response.doc('div.menutv > ul >li > a').items())[1:3]:
-            self.crawl(each.attr.href, callback=self.index_page1)
+            self.crawl(each.attr.href, callback=self.category_pages)
             
     @config(age=10 * 24 * 60 * 60)
-    def index_page1(self, response):
-        items=list(response.doc('div.pagebox > a[href]').items())
+    def category_pages(self, response):
+        items=list(response.doc('div.pagebox:first > a[href]').items())
         last_url=items[-1].attr.href
-        sum_page=int(last_url.split(".")[0].split("_")[1])
+        sum_page=int(last_url.split("_")[1].split(".")[0])
         self.crawl(response.url, callback=self.detail_page)
-        for i in xrange(2,sum_page+1):
-            url="%s/index_%s"%(response.url,i)
-            self.crawl(url, callback=self.detail_page)
+        for i in range(2,4):
+            url="%sindex_%s.html"%(response.url,i)
+            self.crawl(url, callback=self.category_singlepage)
+            
+    @config(age=10 * 24 * 60 * 60)
+    def category_singlepage(self, response):
+        items=response.doc('div.listInfo > h3 > a').items()
+        for each in items:
+            self.crawl(each.attr.href, callback=self.detail_page)  
 
-    @config(priority=3)
+    
+    @config(priority=2)
     def detail_page(self, response):
+        text=response.doc("div#text").text()
+        downloads=[x.attr.href for x in response.doc("div#text  a").items()]
         return {
             "url": response.url,
             "title": response.doc('title').text(),
+            "text":response.doc("div#text").text(),
+            "downloads":downloads
         }
 
     @catch_status_code_error  
     def callback(self, response):
         with open(r"d:\error.txt") as f:
             f.write(response.url)
+
+
