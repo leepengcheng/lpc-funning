@@ -47,9 +47,9 @@ class Handler(BaseHandler):
             "downloads":downloads
         }
 
-    @catch_status_code_error  
-    def callback(self, response):
-        with open(r"d:\error.txt") as f:
-            f.write(response.url)
+#     @catch_status_code_error  
+#     def callback(self, response):
+#         with open(r"d:\error.txt") as f:
+#             f.write(response.url)
 
 
