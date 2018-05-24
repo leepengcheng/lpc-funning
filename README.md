@@ -1,2 +1,3 @@
 # lpc-funning
-funing project
+private funning project
+仅供个人娱乐
