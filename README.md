@@ -1,2 +1,2 @@
-# lpc-iot
-my simple  iot project demo
+# lpc-funning
+funing project
