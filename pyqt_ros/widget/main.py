@@ -5,6 +5,8 @@ import sys
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from ui.ui_main import Ui_mainWindow
+import rospy
+from std_msgs.msg import String
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -12,7 +14,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_mainWindow()
         self.ui.setupUi(self)
         self.initializeSignals()  #初始化信号槽链接
+        rospy.init_node("qt_node")
+        self.pub= rospy.Publisher('/chatter', String, queue_size=10)
+        self.sub=rospy.Subscriber("/chatter", String, self.callback)
 
+    def callback(self,msg):
+        print("listener"+msg.data)
 
     def initializeSignals(self):
         '''
@@ -21,7 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.check_section.clicked.connect(self.showSection)
 
     def showSection(self,click):
-        print(click)
+        self.pub.publish("hello world")
 
     
 
